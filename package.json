@@ -1,0 +1,13 @@
+{
+  "name": "party-poll-v2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@slack/bolt": "^3.12.1",
+    "querystring": "^0.2.1"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.2"
+  }
+}
