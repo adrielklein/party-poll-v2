@@ -1,5 +1,5 @@
-const { HELP_TEXT_LINES } = require("./contants");
-const { REACTION_NAMES } = require("./contants");
+const { HELP_TEXT_LINES } = require("./constants");
+const { REACTION_NAMES } = require("./constants");
 
 const sendHelp = (say) => {
   return say({
