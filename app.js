@@ -9,7 +9,6 @@ if (process.env.NODE_ENV !== "production") {
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
-  // appToken: process.env.SLACK_APP_TOKEN,
   logLevel: LogLevel.DEBUG,
   customRoutes: [
     {
@@ -48,24 +47,24 @@ app.message("hello", async ({ message, say }) => {
           type: "mrkdwn",
           text: `Hey there <@${message.user}>!`,
         },
-        accessory: {
-          type: "button",
-          text: {
-            type: "plain_text",
-            text: "Click Me",
-          },
-          action_id: "button_click",
-        },
       },
     ],
     text: `Hey there <@${message.user}>!`,
   });
 });
 
-app.action("button_click", async ({ body, ack, say }) => {
-  // Acknowledge the action
+app.command("/echo", async ({ command, ack, respond }) => {
+  // Acknowledge command request
   await ack();
-  await say(`<@${body.user.id}> clicked the button`);
+
+  await respond(`${command.text}`);
+});
+
+app.command("/partypoll", async ({ command, ack, say }) => {
+  // Acknowledge command request
+  await ack();
+
+  await say(`Party poll coming soon!`);
 });
 
 (async () => {
