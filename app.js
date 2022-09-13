@@ -61,12 +61,10 @@ app.command("/echo", async ({ command, ack, respond }) => {
   await respond(`${command.text}`);
 });
 
-app.command("/partypoll", async ({ command, ack, say, body }) => {
+app.command("/partypoll", async ({ ack, say, body, client }) => {
   // Acknowledge command request
   await ack();
-  await createPoll(body.channel_id, body.text, say)
-
-  await say(`Party poll coming soon!`);
+  await createPoll(body.channel_id, body.text, say, client);
 });
 
 (async () => {
