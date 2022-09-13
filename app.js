@@ -1,5 +1,6 @@
 const { App, LogLevel } = require("@slack/bolt");
 var qs = require("querystring");
+const { createPoll } = require("./pollCreator/poll");
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -60,9 +61,10 @@ app.command("/echo", async ({ command, ack, respond }) => {
   await respond(`${command.text}`);
 });
 
-app.command("/partypoll", async ({ command, ack, say }) => {
+app.command("/partypoll", async ({ command, ack, say, body }) => {
   // Acknowledge command request
   await ack();
+  await createPoll(body.channel_id, body.text, say)
 
   await say(`Party poll coming soon!`);
 });
