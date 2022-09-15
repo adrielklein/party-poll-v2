@@ -3,10 +3,6 @@ const { App, LogLevel, AwsLambdaReceiver } = require("@slack/bolt");
 var qs = require("querystring");
 const { createPoll } = require("./pollCreator/poll");
 
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
-
 // Initialize your custom receiver
 const awsLambdaReceiver = new AwsLambdaReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
