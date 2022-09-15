@@ -1,4 +1,5 @@
-const { App, LogLevel } = require("@slack/bolt");
+const { App, LogLevel, AwsLambdaReceiver } = require("@slack/bolt");
+
 var qs = require("querystring");
 const { createPoll } = require("./pollCreator/poll");
 
@@ -6,10 +7,16 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
+// Initialize your custom receiver
+const awsLambdaReceiver = new AwsLambdaReceiver({
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
+});
+
 // Initializes your app with your bot token and signing secret
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
+  receiver: awsLambdaReceiver,
   logLevel: LogLevel.DEBUG,
   customRoutes: [
     {
@@ -41,7 +48,8 @@ const app = new App({
 app.command("/partypoll", async ({ ack, say, body, client }) => {
   // Acknowledge command request
   await ack();
-  await createPoll(body.channel_id, body.text, say, client);
+  await client.conversations.join({channel: body.channel_id});
+  await createPoll(body.text, say, client);
 });
 
 (async () => {
@@ -50,3 +58,9 @@ app.command("/partypoll", async ({ ack, say, body, client }) => {
 
   console.log("⚡️ Bolt app is running!");
 })();
+
+// Handle the Lambda function event
+module.exports.handler = async (event, context, callback) => {
+  const handler = await awsLambdaReceiver.start();
+  return handler(event, context, callback);
+};

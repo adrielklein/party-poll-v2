@@ -12,38 +12,39 @@ const sendHelp = (say) => {
   });
 };
 
-const getTitleAndFormattedOptions = (channelId, text) => {
-  const values = text
-    .replace(/\“|\”|\〝|\〞/g, '"') // Convert irregular quotes to regular ones
-    .match(/\w+|"[^"]+"/g)
-    .map((value) => value.replace(/\"|\'|\“|\”|\”|\〝|\〞/g, ""));
-  const title = values[0];
-  const options = values.length === 1 ? ["yes", "no"] : values;
-  if (options.length > 10) {
-    return sendError(channelId);
-  }
-
-  return {
-    title,
-    formattedOptions: options
-      .slice(1)
-      .map((option, i) => `:${REACTION_NAMES[i]}: ${option}`),
-  };
+const sendError = (say, numOptions) => {
+  return say({
+    response_type: "ephemeral",
+    text: "Sorry friend :cry:",
+    attachments: [
+      {
+        text: `Max number of options is 10. You gave ${numOptions} :flushed:\nPlease try again with fewer options`,
+      },
+    ],
+  });
 };
 
-const createPoll = async (channelId, text, say, client) => {
+const createPoll = async ( text, say, client) => {
   console.log("createPoll", { text });
   if (text === "help" || text === "") {
     return sendHelp(say);
   }
 
-  const { title, formattedOptions } = getTitleAndFormattedOptions(
-    channelId,
-    text
+  const values = text
+    .replace(/\“|\”|\〝|\〞/g, '"') // Convert irregular quotes to regular ones
+    .match(/\w+|"[^"]+"/g)
+    .map((value) => value.replace(/\"|\'|\“|\”|\”|\〝|\〞/g, ""));
+  const title = values[0];
+  const options = values.length === 1 ? ["yes", "no"] : values.slice(1);
+  if (options.length > 10) {
+    return sendError(say, options.length);
+  }
+
+  const formattedOptions = options.map(
+    (option, i) => `:${REACTION_NAMES[i]}: ${option}`
   );
 
   const outboundMessage = {
-    channel: channelId,
     blocks: [
       { type: "header", text: { type: "plain_text", text: title } },
       {
