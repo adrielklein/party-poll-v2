@@ -38,29 +38,6 @@ const app = new App({
   ],
 });
 
-app.message("hello", async ({ message, say }) => {
-  // say() sends a message to the channel where the event was triggered
-  await say({
-    blocks: [
-      {
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `Hey there <@${message.user}>!`,
-        },
-      },
-    ],
-    text: `Hey there <@${message.user}>!`,
-  });
-});
-
-app.command("/echo", async ({ command, ack, respond }) => {
-  // Acknowledge command request
-  await ack();
-
-  await respond(`${command.text}`);
-});
-
 app.command("/partypoll", async ({ ack, say, body, client }) => {
   // Acknowledge command request
   await ack();
