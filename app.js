@@ -27,7 +27,11 @@ const app = new App({
           const body = JSON.parse(data);
           res.writeHead(200, { "Content-Type": "application/json" });
 
+          console.log("got here with body", { body });
+
           const responseBody = { challenge: body.challenge };
+
+          console.log("got here with responseBody", { responseBody });
 
           res.write(JSON.stringify(responseBody));
           res.end();
@@ -44,7 +48,7 @@ const app = new App({
 app.command("/partypoll", async ({ ack, say, body, client }) => {
   // Acknowledge command request
   await ack();
-  await client.conversations.join({channel: body.channel_id});
+  await client.conversations.join({ channel: body.channel_id });
   await createPoll(body.text, say, client);
 });
 
