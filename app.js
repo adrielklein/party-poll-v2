@@ -44,6 +44,12 @@ const app = new App({
           console.error(err.stack);
         });
       },
+      path: '/health-check',
+      method: ['GET'],
+      handler: (req, res) => {
+        res.writeHead(200);
+        res.end('Health check information displayed here!');
+      },
     },
   ],
 });

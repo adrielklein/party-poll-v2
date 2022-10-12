@@ -13,5 +13,11 @@ functions:
       - http:
           path: slack/events
           method: post
+      - http:
+          path: slack/oauth_redirect
+          method: get
+      - http:
+          path: health-check
+          method: get
 plugins:
   - serverless-offline
