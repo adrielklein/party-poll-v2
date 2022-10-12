@@ -13,6 +13,10 @@ const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   receiver: awsLambdaReceiver,
   logLevel: LogLevel.DEBUG,
+  redirectUri: 'https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect', 
+  installerOptions: {
+    redirectUriPath: '/slack/oauth_redirect', 
+  },
   customRoutes: [
     {
       path: "/",
