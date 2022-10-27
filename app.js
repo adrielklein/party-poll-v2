@@ -1,57 +1,30 @@
-const { App, LogLevel, AwsLambdaReceiver } = require("@slack/bolt");
+const { App, ExpressReceiver, LogLevel } = require("@slack/bolt");
+const { FileInstallationStore } = require("@slack/oauth");
+const serverlessExpress = require("@vendia/serverless-express");
+const axios = require("axios");
 
 var qs = require("querystring");
 const { createPoll } = require("./pollCreator/poll");
 
-// Initialize your custom receiver
-const awsLambdaReceiver = new AwsLambdaReceiver({
+const expressReceiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
+  clientId: process.env.SLACK_CLIENT_ID,
+  clientSecret: process.env.SLACK_CLIENT_SECRET,
+  stateSecret: "my-secret",
+  scopes: ["chat:write", "commands"],
 });
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
-  token: process.env.SLACK_BOT_TOKEN,
-  receiver: awsLambdaReceiver,
+  // token: process.env.SLACK_BOT_TOKEN,
+  receiver: expressReceiver,
+  processBeforeResponse: true,
   logLevel: LogLevel.DEBUG,
-  redirectUri: 'https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect', 
+  redirectUri:
+    "https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect",
   installerOptions: {
-    redirectUriPath: '/slack/oauth_redirect', 
+    redirectUriPath: "/slack/oauth_redirect",
   },
-  customRoutes: [
-    {
-      path: "/",
-      method: ["POST"],
-      handler: (req, res) => {
-        let data = "";
-        req.on("data", (chunk) => {
-          data += chunk;
-        });
-        req.on("end", () => {
-          const body = JSON.parse(data);
-          res.writeHead(200, { "Content-Type": "application/json" });
-
-          console.log("got here with body", { body });
-
-          const responseBody = { challenge: body.challenge };
-
-          console.log("got here with responseBody", { responseBody });
-
-          res.write(JSON.stringify(responseBody));
-          res.end();
-        });
-        req.on("error", (err) => {
-          // This prints the error message and stack trace to `stderr`.
-          console.error(err.stack);
-        });
-      },
-      path: '/health-check',
-      method: ['GET'],
-      handler: (req, res) => {
-        res.writeHead(200);
-        res.end('Health check information displayed here!');
-      },
-    },
-  ],
 });
 
 app.command("/partypoll", async ({ ack, say, body, client }) => {
@@ -61,15 +34,70 @@ app.command("/partypoll", async ({ ack, say, body, client }) => {
   await createPoll(body.text, say, client);
 });
 
-(async () => {
-  // Start your app
-  await app.start(process.env.PORT || 3000);
+expressReceiver.router.post("/slack/events", (req, res) => {
+  const body = req.body;
+  res.writeHead(200, { "Content-Type": "application/json" });
 
-  console.log("⚡️ Bolt app is running!");
-})();
+  console.log("got here with body", { body });
 
-// Handle the Lambda function event
-module.exports.handler = async (event, context, callback) => {
-  const handler = await awsLambdaReceiver.start();
-  return handler(event, context, callback);
-};
+  const responseBody = { challenge: body.challenge };
+
+  console.log("got here with responseBody", { responseBody });
+
+  res.write(JSON.stringify(responseBody));
+  res.end();
+});
+
+expressReceiver.router.get("/slack/oauth_redirect", async (req, res) => {
+  console.log("got to oauth_redirect with req", { req });
+  const query = req.query;
+  res.writeHead(200, { "Content-Type": "application/json" });
+
+  console.log("got here with query", { params: query });
+
+  const code = query.code;
+
+  console.log("got here with code", { code });
+
+  const data = {
+    code,
+    clientId: process.env.SLACK_CLIENT_ID,
+    clientSecret: process.env.SLACK_CLIENT_SECRET,
+    state: 'partypoll',
+  };
+  console.log("client id is ", process.env.SLACK_CLIENT_ID);
+  const options = {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    data: qs.stringify(data),
+    url: "https://slack.com/api/oauth.v2.access",
+  };
+  try {
+    await axios(options)
+      .then((response) => {
+        console.log("success in api/oauth.v2.access");
+        console.log({ response });
+        console.log("meta", response.data.response_metadata);
+      })
+      .catch((error) => {
+        console.log("error in api/oauth.v2.access");
+        console.log(error);
+      });
+  } catch (error) {
+    console.log("got error with axios", { error });
+  }
+  console.log("done with axios");
+
+  res.send("You are now authenticated and can use Party Poll in your app!");
+  res.end();
+});
+
+expressReceiver.router.get("/health-check", (req, res) => {
+  // You're working with an express req and res now.
+  console.log("loggin health check");
+  res.send("yay!");
+});
+
+module.exports.handler = serverlessExpress({
+  app: expressReceiver.app,
+});
