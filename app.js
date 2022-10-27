@@ -56,14 +56,15 @@ expressReceiver.router.get("/slack/oauth_redirect", async (req, res) => {
   console.log("got here with query", { params: query });
 
   const code = query.code;
+  const state = query.state;
 
-  console.log("got here with code", { code });
+  console.log("got here with code and state", { code, state });
 
   const data = {
     code,
     clientId: process.env.SLACK_CLIENT_ID,
     clientSecret: process.env.SLACK_CLIENT_SECRET,
-    state: 'partypoll',
+    state,
   };
   console.log("client id is ", process.env.SLACK_CLIENT_ID);
   const options = {
