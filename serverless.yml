@@ -17,6 +17,9 @@ functions:
           path: slack/oauth_redirect
           method: get
       - http:
+          path: slack/install
+          method: get
+      - http:
           path: health-check
           method: get
 plugins:

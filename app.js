@@ -23,7 +23,7 @@ const app = new App({
   redirectUri:
     "https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect",
   installerOptions: {
-    redirectUriPath: "/slack/oauth_redirect",
+    directInstall: true,
   },
 });
 
