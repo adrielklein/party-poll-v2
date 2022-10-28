@@ -12,6 +12,7 @@ const expressReceiver = new ExpressReceiver({
   clientSecret: process.env.SLACK_CLIENT_SECRET,
   stateSecret: "my-secret",
   scopes: ["chat:write", "commands"],
+  installationStore: new FileInstallationStore(),
 });
 
 // Initializes your app with your bot token and signing secret
@@ -22,9 +23,9 @@ const app = new App({
   logLevel: LogLevel.DEBUG,
   redirectUri:
     "https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect",
-  installerOptions: {
-    directInstall: true,
-  },
+  // installerOptions: {
+  //   directInstall: true,
+  // },
 });
 
 app.command("/partypoll", async ({ ack, say, body, client }) => {
