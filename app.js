@@ -10,7 +10,7 @@ const database = {
   set: async (key, data) => {
     console.log("Database SET start");
     pool.query(
-      `INSERT INTO installations (id, data) VALUES(${key}, ${json.stringify(
+      `INSERT INTO installations (id, data) VALUES(${key}, ${JSON.stringify(
         data
       )});`,
       (err, res) => {
@@ -66,6 +66,8 @@ const expressReceiver = new ExpressReceiver({
     "mpim:history",
     "reactions:write",
   ],
+  redirectUri:
+    "https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect",
   installationStore: {
     storeInstallation: async (installation) => {
       // Bolt will pass your handler an installation object
