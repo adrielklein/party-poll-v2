@@ -1,7 +1,7 @@
 const { App, ExpressReceiver, LogLevel } = require("@slack/bolt");
-const { FileInstallationStore } = require("@slack/oauth");
 const serverlessExpress = require("@vendia/serverless-express");
 const axios = require("axios");
+const { Pool } = require("pg");
 
 var qs = require("querystring");
 const { createPoll } = require("./pollCreator/poll");
@@ -11,9 +11,61 @@ const expressReceiver = new ExpressReceiver({
   clientId: process.env.SLACK_CLIENT_ID,
   clientSecret: process.env.SLACK_CLIENT_SECRET,
   stateSecret: "my-secret",
-  scopes: ["chat:write", "commands"],
-  installationStore: new FileInstallationStore(),
+  scopes: [
+    "chat:write",
+    "commands",
+    "channels:join",
+    "channels:history",
+    "chat:write",
+    "chat:write.public",
+    "groups:history",
+    "im:history",
+    "mpim:history",
+    "reactions:write",
+  ],
 });
+
+const pool = new Pool({
+  user: "adrielklein",
+  host: "database-1.cdfkloccybir.us-east-1.rds.amazonaws.com",
+  database: "partypoll",
+  password: process.env.DB_PASSWORD,
+  port: 5432,
+});
+const database = {
+  set: async (key, data) => {
+    console.log("Database SET start");
+    pool.query(
+      `INSERT INTO installations (id, data) VALUES(${key}, ${json.stringify(
+        data
+      )});`,
+      (err, res) => {
+        console.log(err, res);
+        pool.end();
+        console.log("Database SET END");
+      }
+    );
+  },
+  delete: async (key) => {
+    console.log("Database DELETE start");
+    pool.query(`DELETE FROM installations WHERE id=${key};`, (err, res) => {
+      console.log(err, res);
+      pool.end();
+      console.log("Database DELETE END");
+    });
+  },
+  get: async (key) => {
+    console.log("Database GET Start");
+    return pool.query(
+      `SELECT data FROM installations WHERE id=${key}`,
+      (err, res) => {
+        console.log(err, res);
+        pool.end();
+        console.log("Database GET end");
+      }
+    );
+  },
+};
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
@@ -23,12 +75,63 @@ const app = new App({
   logLevel: LogLevel.DEBUG,
   redirectUri:
     "https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect",
-  // installerOptions: {
-  //   directInstall: true,
-  // },
+  installerOptions: {
+    directInstall: true,
+  },
+  installationStore: {
+    storeInstallation: async (installation) => {
+      // Bolt will pass your handler an installation object
+      // Change the lines below so they save to your database
+      if (
+        installation.isEnterpriseInstall &&
+        installation.enterprise !== undefined
+      ) {
+        // handle storing org-wide app installation
+        return await database.set(installation.enterprise.id, installation);
+      }
+      if (installation.team !== undefined) {
+        // single team app installation
+        return await database.set(installation.team.id, installation);
+      }
+      throw new Error("Failed saving installation data to installationStore");
+    },
+    fetchInstallation: async (installQuery) => {
+      // Bolt will pass your handler an installQuery object
+      // Change the lines below so they fetch from your database
+      if (
+        installQuery.isEnterpriseInstall &&
+        installQuery.enterpriseId !== undefined
+      ) {
+        // handle org wide app installation lookup
+        return await database.get(installQuery.enterpriseId);
+      }
+      if (installQuery.teamId !== undefined) {
+        // single team app installation lookup
+        return await database.get(installQuery.teamId);
+      }
+      throw new Error("Failed fetching installation");
+    },
+    deleteInstallation: async (installQuery) => {
+      // Bolt will pass your handler  an installQuery object
+      // Change the lines below so they delete from your database
+      if (
+        installQuery.isEnterpriseInstall &&
+        installQuery.enterpriseId !== undefined
+      ) {
+        // org wide app installation deletion
+        return await database.delete(installQuery.enterpriseId);
+      }
+      if (installQuery.teamId !== undefined) {
+        // single team app installation deletion
+        return await database.delete(installQuery.teamId);
+      }
+      throw new Error("Failed to delete installation");
+    },
+  },
 });
 
 app.command("/partypoll", async ({ ack, say, body, client }) => {
+  console.log("did I get here?");
   // Acknowledge command request
   await ack();
   await client.conversations.join({ channel: body.channel_id });
