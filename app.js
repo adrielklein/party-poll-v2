@@ -82,6 +82,7 @@ const app = new App({
     storeInstallation: async (installation) => {
       // Bolt will pass your handler an installation object
       // Change the lines below so they save to your database
+      console.log("calling storeInstallation");
       if (
         installation.isEnterpriseInstall &&
         installation.enterprise !== undefined
@@ -98,6 +99,8 @@ const app = new App({
     fetchInstallation: async (installQuery) => {
       // Bolt will pass your handler an installQuery object
       // Change the lines below so they fetch from your database
+      console.log("calling fetchInstallation");
+
       if (
         installQuery.isEnterpriseInstall &&
         installQuery.enterpriseId !== undefined
@@ -114,6 +117,7 @@ const app = new App({
     deleteInstallation: async (installQuery) => {
       // Bolt will pass your handler  an installQuery object
       // Change the lines below so they delete from your database
+      console.log("calling deleteInstallation");
       if (
         installQuery.isEnterpriseInstall &&
         installQuery.enterpriseId !== undefined
@@ -134,8 +138,12 @@ app.command("/partypoll", async ({ ack, say, body, client }) => {
   console.log("did I get here?");
   // Acknowledge command request
   await ack();
+  console.log("finished ack");
+
   await client.conversations.join({ channel: body.channel_id });
+  console.log("finished client.conversations.join");
   await createPoll(body.text, say, client);
+  console.log("finished createPoll");
 });
 
 expressReceiver.router.post("/slack/events", (req, res) => {
