@@ -6,32 +6,6 @@ const { Pool } = require("pg");
 var qs = require("querystring");
 const { createPoll } = require("./pollCreator/poll");
 
-const expressReceiver = new ExpressReceiver({
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
-  clientId: process.env.SLACK_CLIENT_ID,
-  clientSecret: process.env.SLACK_CLIENT_SECRET,
-  stateSecret: "my-secret",
-  scopes: [
-    "chat:write",
-    "commands",
-    "channels:join",
-    "channels:history",
-    "chat:write",
-    "chat:write.public",
-    "groups:history",
-    "im:history",
-    "mpim:history",
-    "reactions:write",
-  ],
-});
-
-const pool = new Pool({
-  user: "adrielklein",
-  host: "database-1.cdfkloccybir.us-east-1.rds.amazonaws.com",
-  database: "partypoll",
-  password: process.env.DB_PASSWORD,
-  port: 5432,
-});
 const database = {
   set: async (key, data) => {
     console.log("Database SET start");
@@ -67,17 +41,31 @@ const database = {
   },
 };
 
-// Initializes your app with your bot token and signing secret
-const app = new App({
-  // token: process.env.SLACK_BOT_TOKEN,
-  receiver: expressReceiver,
-  processBeforeResponse: true,
-  logLevel: LogLevel.DEBUG,
-  redirectUri:
-    "https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect",
-  installerOptions: {
-    directInstall: true,
-  },
+const pool = new Pool({
+  user: "adrielklein",
+  host: "database-1.cdfkloccybir.us-east-1.rds.amazonaws.com",
+  database: "partypoll",
+  password: process.env.DB_PASSWORD,
+  port: 5432,
+});
+
+const expressReceiver = new ExpressReceiver({
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
+  clientId: process.env.SLACK_CLIENT_ID,
+  clientSecret: process.env.SLACK_CLIENT_SECRET,
+  stateSecret: "my-secret",
+  scopes: [
+    "chat:write",
+    "commands",
+    "channels:join",
+    "channels:history",
+    "chat:write",
+    "chat:write.public",
+    "groups:history",
+    "im:history",
+    "mpim:history",
+    "reactions:write",
+  ],
   installationStore: {
     storeInstallation: async (installation) => {
       // Bolt will pass your handler an installation object
@@ -131,6 +119,19 @@ const app = new App({
       }
       throw new Error("Failed to delete installation");
     },
+  },
+});
+
+// Initializes your app with your bot token and signing secret
+const app = new App({
+  // token: process.env.SLACK_BOT_TOKEN,
+  receiver: expressReceiver,
+  processBeforeResponse: true,
+  logLevel: LogLevel.DEBUG,
+  redirectUri:
+    "https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect",
+  installerOptions: {
+    directInstall: true,
   },
 });
 
