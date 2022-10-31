@@ -66,8 +66,10 @@ const expressReceiver = new ExpressReceiver({
     "mpim:history",
     "reactions:write",
   ],
-  redirectUri:
-    "https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect",
+  installerOptions: {
+    redirectUriPath:
+      "https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect",
+  },
   installationStore: {
     storeInstallation: async (installation) => {
       // Bolt will pass your handler an installation object
