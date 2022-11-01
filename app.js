@@ -6,41 +6,6 @@ const { Pool } = require("pg");
 var qs = require("querystring");
 const { createPoll } = require("./pollCreator/poll");
 
-const database = {
-  set: async (key, data) => {
-    console.log("Database SET start");
-    pool.query(
-      `INSERT INTO installations (id, data) VALUES(${key}, ${JSON.stringify(
-        data
-      )});`,
-      (err, res) => {
-        console.log(err, res);
-        pool.end();
-        console.log("Database SET END");
-      }
-    );
-  },
-  delete: async (key) => {
-    console.log("Database DELETE start");
-    pool.query(`DELETE FROM installations WHERE id=${key};`, (err, res) => {
-      console.log(err, res);
-      pool.end();
-      console.log("Database DELETE END");
-    });
-  },
-  get: async (key) => {
-    console.log("Database GET Start");
-    return pool.query(
-      `SELECT data FROM installations WHERE id=${key}`,
-      (err, res) => {
-        console.log(err, res);
-        pool.end();
-        console.log("Database GET end");
-      }
-    );
-  },
-};
-
 const pool = new Pool({
   user: "adrielklein",
   host: "database-1.cdfkloccybir.us-east-1.rds.amazonaws.com",
@@ -48,6 +13,36 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   port: 5432,
 });
+
+const database = {
+  set: async (key, data) => {
+    console.log("Database SET start");
+    const query = `INSERT INTO installations (id, data) VALUES('${key}', '${JSON.stringify(
+      data
+    )}');`;
+    console.log({
+      query,
+    });
+    const result = await pool.query(query);
+    console.log("finished the pool query for Database SET", { result });
+  },
+  delete: async (key) => {
+    console.log("Database DELETE start");
+    const result = await pool.query(
+      `DELETE FROM installations WHERE id='${key}';`
+    );
+    console.log("Database DELETE END", { result });
+  },
+  get: async (key) => {
+    console.log("Database GET Start");
+    const result = await pool.query(
+      `SELECT data FROM installations WHERE id='${key}'`
+    );
+    const returnValue = result.rows[0].data;
+    console.log("Database GET end", { result, returnValue });
+    return returnValue;
+  },
+};
 
 const expressReceiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -66,10 +61,10 @@ const expressReceiver = new ExpressReceiver({
     "mpim:history",
     "reactions:write",
   ],
-  installerOptions: {
-    redirectUriPath:
-      "https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect",
-  },
+  // installerOptions: {
+  //   redirectUriPath:
+  //     "https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect",
+  // },
   installationStore: {
     storeInstallation: async (installation) => {
       // Bolt will pass your handler an installation object
@@ -132,8 +127,8 @@ const app = new App({
   receiver: expressReceiver,
   processBeforeResponse: true,
   logLevel: LogLevel.DEBUG,
-  redirectUri:
-    "https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect",
+  // redirectUri:
+  //   "https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect",
   installerOptions: {
     directInstall: true,
   },
@@ -143,12 +138,16 @@ app.command("/partypoll", async ({ ack, say, body, client }) => {
   console.log("did I get here?");
   // Acknowledge command request
   await ack();
-  console.log("finished ack");
-
-  await client.conversations.join({ channel: body.channel_id });
-  console.log("finished client.conversations.join");
-  await createPoll(body.text, say, client);
-  console.log("finished createPoll");
+  console.log("finished ack", { ack, say, body, client });
+  console.log("client.conversations", client.conversations);
+  try {
+    await client.conversations.join({ channel: body.channel_id });
+    console.log("finished client.conversations.join");
+    await createPoll(body.text, say, client);
+    console.log("finished createPoll");
+  } catch (error) {
+    console.log("error in slach command", { error });
+  }
 });
 
 expressReceiver.router.post("/slack/events", (req, res) => {
