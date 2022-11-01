@@ -135,19 +135,16 @@ const app = new App({
 });
 
 app.command("/partypoll", async ({ ack, say, body, client }) => {
-  console.log("did I get here?");
+  console.log("got to /partypoll", ack, say, body, client);
   // Acknowledge command request
-  await ack();
-  console.log("finished ack", { ack, say, body, client });
-  console.log("client.conversations", client.conversations);
-  try {
-    await client.conversations.join({ channel: body.channel_id });
-    console.log("finished client.conversations.join");
-    await createPoll(body.text, say, client);
-    console.log("finished createPoll");
-  } catch (error) {
-    console.log("error in slach command", { error });
-  }
+  const ackResult = await ack();
+  console.log("finished ack", { ackResult });
+  // console.log("client.conversations", client.conversations);
+  // await client.conversations.join({ channel: body.channel_id });
+  // console.log("finished client.conversations.join");
+  await createPoll(body.text, say, client);
+  console.log("finished createPoll");
+  console.log("error in slach command", { error });
 });
 
 expressReceiver.router.post("/slack/events", (req, res) => {
