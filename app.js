@@ -61,10 +61,6 @@ const expressReceiver = new ExpressReceiver({
     "mpim:history",
     "reactions:write",
   ],
-  // installerOptions: {
-  //   redirectUriPath:
-  //     "https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect",
-  // },
   installationStore: {
     storeInstallation: async (installation) => {
       // Bolt will pass your handler an installation object
@@ -86,18 +82,27 @@ const expressReceiver = new ExpressReceiver({
     fetchInstallation: async (installQuery) => {
       // Bolt will pass your handler an installQuery object
       // Change the lines below so they fetch from your database
-      console.log("calling fetchInstallation");
+      console.log("HELLLOOOOOO");
+      console.log("calling fetchInstallation with", { installQuery });
 
       if (
         installQuery.isEnterpriseInstall &&
         installQuery.enterpriseId !== undefined
       ) {
         // handle org wide app installation lookup
-        return await database.get(installQuery.enterpriseId);
+        console.log("orgwide", installQuery.enterpriseId);
+        const returnValue = await database.get(installQuery.enterpriseId);
+
+        console.log({ returnValue });
+
+        return returnValue;
       }
       if (installQuery.teamId !== undefined) {
         // single team app installation lookup
-        return await database.get(installQuery.teamId);
+        console.log("singleTeam", installQuery.teamId);
+        const returnValue = await database.get(installQuery.teamId);
+        console.log({ returnValue });
+        return returnValue;
       }
       throw new Error("Failed fetching installation");
     },
@@ -135,16 +140,22 @@ const app = new App({
 });
 
 app.command("/partypoll", async ({ ack, say, body, client }) => {
-  console.log("got to /partypoll", ack, say, body, client);
-  // Acknowledge command request
-  const ackResult = await ack();
-  console.log("finished ack", { ackResult });
-  // console.log("client.conversations", client.conversations);
-  // await client.conversations.join({ channel: body.channel_id });
-  // console.log("finished client.conversations.join");
+  console.log("got to /partypoll");
+  console.log("ack", ack);
+  console.log("--------------------");
+  console.log("say", say);
+  console.log("--------------------");
+  console.log("body", body);
+  console.log("--------------------");
+  console.log("client", client);
+  console.log("--------------------");
+
+  await ack();
+  console.log("finished ack");
+  await client.conversations.join({ channel: body.channel_id });
+  console.log("finished client.conversations.join");
   await createPoll(body.text, say, client);
   console.log("finished createPoll");
-  console.log("error in slach command", { error });
 });
 
 expressReceiver.router.post("/slack/events", (req, res) => {
