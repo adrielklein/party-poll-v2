@@ -1,50 +1,61 @@
 const { App, ExpressReceiver, LogLevel } = require("@slack/bolt");
 const serverlessExpress = require("@vendia/serverless-express");
 const axios = require("axios");
-const { Pool } = require("pg");
+const { Client } = require("pg");
 
 var qs = require("querystring");
 const { createPoll } = require("./pollCreator/poll");
 
-const pool = new Pool({
+const db_creds = {
   user: "adrielklein",
   host: "database-1.cdfkloccybir.us-east-1.rds.amazonaws.com",
   database: "partypoll",
   password: process.env.DB_PASSWORD,
   port: 5432,
-});
+};
 
 const database = {
   set: async (key, data) => {
     console.log("Database SET start");
-    const query = `INSERT INTO installations (id, data) VALUES('${key}', '${JSON.stringify(
-      data
-    )}');`;
     console.log({
-      query,
+      key,
+      data,
     });
-    const result = await pool.query(query);
+    const client = new Client(db_creds);
+    await client.connect();
+    const result = await client.query(
+      "INSERT INTO installations (id, data) VALUES($1, $2)",
+      [key, JSON.stringify(data)]
+    );
     console.log("finished the pool query for Database SET", { result });
+    await client.end()
   },
   delete: async (key) => {
     console.log("Database DELETE start");
-    const result = await pool.query(
+    const client = new Client(db_creds);
+    await client.connect();
+    const result = await client.query(
       `DELETE FROM installations WHERE id='${key}';`
     );
+    await client.end()
     console.log("Database DELETE END", { result });
   },
   get: async (key) => {
-    console.log("Database GET Start");
-    const result = await pool.query(
+    console.log("Database GET Start", key);
+    const client = new Client(db_creds);
+    await client.connect();
+    const result = await client.query(
       `SELECT data FROM installations WHERE id='${key}'`
     );
     const returnValue = result.rows[0].data;
     console.log("Database GET end", { result, returnValue });
+    await client.end()
     return returnValue;
   },
 };
 
 const expressReceiver = new ExpressReceiver({
+  processBeforeResponse: true,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
   clientId: process.env.SLACK_CLIENT_ID,
   clientSecret: process.env.SLACK_CLIENT_SECRET,
@@ -156,6 +167,13 @@ app.command("/partypoll", async ({ ack, say, body, client }) => {
   console.log("finished client.conversations.join");
   await createPoll(body.text, say, client);
   console.log("finished createPoll");
+});
+
+app.command("/partypolltest", async ({ ack, say, body, client }) => {
+  console.log("got to test");
+  await ack();
+  await say("hello world");
+  console.log("done with say");
 });
 
 expressReceiver.router.post("/slack/events", (req, res) => {
