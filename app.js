@@ -7,11 +7,11 @@ var qs = require("querystring");
 const { createPoll } = require("./pollCreator/poll");
 
 const db_creds = {
-  user: "adrielklein",
-  host: "database-1.cdfkloccybir.us-east-1.rds.amazonaws.com",
-  database: "partypoll",
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database:  process.env.DB_DATABASE,
   password: process.env.DB_PASSWORD,
-  port: 5432,
+  port: process.env.DB_PORT,
 };
 
 const database = {
