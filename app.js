@@ -65,12 +65,6 @@ const expressReceiver = new ExpressReceiver({
     "chat:write",
     "commands",
     "channels:join",
-    "channels:history",
-    "chat:write",
-    "chat:write.public",
-    "groups:history",
-    "im:history",
-    "mpim:history",
     "reactions:write",
   ],
   installationStore: {
