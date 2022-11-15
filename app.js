@@ -9,7 +9,7 @@ const { createPoll } = require("./pollCreator/poll");
 const db_creds = {
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
-  database:  process.env.DB_DATABASE,
+  database: process.env.DB_DATABASE,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
   ssl: true,
@@ -29,7 +29,7 @@ const database = {
       [key, JSON.stringify(data)]
     );
     console.log("finished the pool query for Database SET", { result });
-    await client.end()
+    await client.end();
   },
   delete: async (key) => {
     console.log("Database DELETE start");
@@ -38,7 +38,7 @@ const database = {
     const result = await client.query(
       `DELETE FROM installations WHERE id='${key}';`
     );
-    await client.end()
+    await client.end();
     console.log("Database DELETE END", { result });
   },
   get: async (key) => {
@@ -50,7 +50,7 @@ const database = {
     );
     const returnValue = result.rows[0].data;
     console.log("Database GET end", { result, returnValue });
-    await client.end()
+    await client.end();
     return returnValue;
   },
 };
@@ -61,12 +61,7 @@ const expressReceiver = new ExpressReceiver({
   clientId: process.env.SLACK_CLIENT_ID,
   clientSecret: process.env.SLACK_CLIENT_SECRET,
   stateSecret: "my-secret",
-  scopes: [
-    "chat:write",
-    "commands",
-    "channels:join",
-    "reactions:write",
-  ],
+  scopes: ["chat:write", "commands", "channels:join", "reactions:write"],
   installationStore: {
     storeInstallation: async (installation) => {
       // Bolt will pass your handler an installation object
@@ -157,7 +152,7 @@ app.command("/partypoll", async ({ ack, say, body, client }) => {
   console.log("--------------------");
 
   await ack();
-  console.log("finished ack");
+  console.log("finished ack", body.channel_id);
   await client.conversations.join({ channel: body.channel_id });
   console.log("finished client.conversations.join");
   await createPoll(body.text, say, client);
