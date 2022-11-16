@@ -55,6 +55,12 @@ body, p {
 	font: 400 1.125rem/1.875rem "Open Sans", sans-serif;
 }
 
+.center-container{
+	width: 70%;
+	margin-right: auto;
+	margin-left: auto;
+}
+
 .img-bottom {
 	margin-bottom: 1rem;
 }
