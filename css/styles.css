@@ -59,6 +59,21 @@ body, p {
 	margin-bottom: 1rem;
 }
 
+.image2{
+	display: none;
+ }
+ 
+ @media only screen and (max-width: 500px){ 
+	.image1{
+	  display: none;
+	}
+ 
+	.image2{
+	  display: block;
+	  width: 100%;
+	}
+ }
+
 .img-example {
 	margin-top: 6rem;
 }
