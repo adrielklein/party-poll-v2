@@ -1,55 +1,344 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Party Poll</title>
-    <link rel="stylesheet" href="/stylesheets/style.css" />
-  </head>
-  <body style="text-align: center">
-    <h1 style="font-size: 70px">Party Poll</h1>
-    <img src="public/images/partyPoll.gif" />
-    <h2>The Problem</h2>
-    <p><b>Have you ever needed to take a poll in Slack?</b></p>
-    <p>There are other polling apps out there but you'll need 💰 for them</p>
-    <p>
-      <b>
-        Have you created an emoji poll as described on the
-        <a href="https://slack.com/help/articles/229002507-Create-a-poll-"
-          >Slack docs</a
-        >?</b
-      >
-    </p>
-    <p>
-      Pretty straightforward but annoying to manually type in all the emoji
-      options.
-    </p>
-    <h2>The Solution</h2>
-    <p>
-      Party Poll is a free Slack app that allows users to create reaction based
-      polls with a slash command
-    </p>
-    <p>Upon entering the command, Party Poll will cast one vote to each option to allow users to easily select an emoji to vote</p>
-    <p>With Party Poll, you can easily create polls for free 🎉</p>
-    <a href="https://1zofmxtv82.execute-api.us-east-1.amazonaws.com/dev/slack/install"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
-    <p>
-      Created with ❤ by
-      <a href="https://github.com/adrielklein">Adriel Klein</a>. Please
-      <a href="mailto:adrielmklein@gmail.com">contact</a>
-      for questions or comments.
-    </p>
-    <p>If you'd like to contribute to help enable more free tools like this, please consider donating below.</p>
-    <p>No amount is too little 🙂</p>
-    <form action="https://www.paypal.com/donate" method="post" target="_top">
-      <input type="hidden" name="business" value="N747SYBTDWJ64" />
-      <input type="hidden" name="no_recurring" value="0" />
-      <input type="hidden" name="currency_code" value="USD" />
-      <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-      <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-      </form>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
-      <p>
-      Please also see our
-      <a href="public/html/terms.html">Terms of service</a> and
-      <a href="public/html/privacy.html">Privacy policy</a>.
-    </p>
-  </body>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Party Poll is a landing page HTML template built with Bootstrap 4 for presenting mobile apps to the online audience and for getting visitors to become users.">
+    <meta name="author" content="Inovatik">
+
+    <!-- OG Meta Tags to improve the way the post looks when you share the page on LinkedIn, Facebook, Google+ -->
+	<meta property="og:site_name" content="" /> <!-- website name -->
+	<meta property="og:site" content="" /> <!-- website link -->
+	<meta property="og:title" content=""/> <!-- title shown in the actual shared post -->
+	<meta property="og:description" content="" /> <!-- description shown in the actual shared post -->
+	<meta property="og:image" content="" /> <!-- image link, make sure it's jpg -->
+	<meta property="og:url" content="" /> <!-- where do you want your post to link to -->
+	<meta property="og:type" content="article" />
+
+    <!-- Webpage Title -->
+    <title>Party Poll</title>
+    
+    <!-- Styles -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700&display=swap&subset=latin-ext" rel="stylesheet">
+    <link href="./css/bootstrap.css" rel="stylesheet">
+    <link href="./css/fontawesome-all.css" rel="stylesheet">
+    <link href="./css/swiper.css" rel="stylesheet">
+	<link href="./css/magnific-popup.css" rel="stylesheet">
+	<link href="./css/styles.css" rel="stylesheet">
+	
+	<!-- Favicon  -->
+    <link rel="icon" href="images/favicon.png">
+</head>
+<body data-spy="scroll" data-target=".fixed-top">
+    
+    <!-- Preloader -->
+	<div class="spinner-wrapper">
+        <div class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+        </div>
+    </div>
+    <!-- end of preloader -->
+    
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+        <div class="container">
+            <!-- Text Logo - Use this if you don't have a graphic logo -->
+            <!-- <a class="navbar-brand logo-text page-scroll" href="index.html">Party Poll</a> -->
+
+            <!-- Image Logo -->
+            <a class="navbar-brand logo-image" href="index.html"><img src="images/logo.svg" alt="alternative"></a> 
+            
+            <!-- Mobile Menu Toggle Button -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-awesome fas fa-bars"></span>
+                <span class="navbar-toggler-awesome fas fa-times"></span>
+            </button>
+            <!-- end of mobile menu toggle button -->
+
+            <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link page-scroll" href="#description">DESCRIPTION <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link page-scroll" href="#screens">SCREENS</a>
+                    </li>
+
+                    <!-- Dropdown Menu -->          
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle page-scroll" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false">EXTRA</a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="terms-conditions.html"><span class="item-text">TERMS CONDITIONS</span></a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="privacy-policy.html"><span class="item-text">PRIVACY POLICY</span></a>
+                        </div>
+                    </li>
+                    <!-- end of dropdown menu -->
+                </ul>
+                <span class="nav-item">
+                    <a class="btn-outline-sm page-scroll" href="https://1zofmxtv82.execute-api.us-east-1.amazonaws.com/dev/slack/install">INSTALL</a>
+                </span>
+            </div>
+        </div> <!-- end of container -->
+    </nav> <!-- end of navbar -->
+    <!-- end of navigation -->
+
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="text-container">
+                        <img class="img-bottom" src="images/demo.gif" />
+                        <p class="p-large p-heading p-heading-2">Start creating free polls that are simple to create and won't cost you a penny.</p>
+                        <a class="btn-solid-lg" href="https://1zofmxtv82.execute-api.us-east-1.amazonaws.com/dev/slack/install">INSTALL</a>
+                    </div> <!-- end of text-container -->
+                </div> <!-- end of col -->
+            </div> <!-- end of row -->
+        </div> <!-- end of container -->
+        <div class="deco-white-circle-1">
+            <img src="images/decorative-white-circle.svg" alt="alternative">
+        </div> <!-- end of deco-white-circle-1 -->
+        <div class="deco-white-circle-2">
+            <img src="images/decorative-white-circle.svg" alt="alternative">
+        </div> <!-- end of deco-white-circle-2 -->
+        <div class="deco-blue-circle">
+            <img src="images/decorative-blue-circle.svg" alt="alternative">
+        </div> <!-- end of deco-blue-circle -->
+        <div class="deco-yellow-circle">
+            <img src="images/decorative-yellow-circle.svg" alt="alternative">
+        </div> <!-- end of deco-yellow-circle -->
+        <div class="deco-green-diamond">
+            <!-- <img src="images/decorative-green-diamond.svg" alt="alternative"> -->
+        </div> <!-- end of deco-yellow-circle -->
+    </header> <!-- end of header -->
+    <!-- end of header -->
+
+
+
+    <!-- Description 1 -->
+    <div id="description" class="basic-1">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="image-container">
+                        <img class="img-fluid img-example" src="images/example.png" alt="alternative">
+                    </div> <!-- end of image-container -->
+                </div> <!-- end of col -->
+                <div class="col-lg-6">
+                    <div class="text-container">
+                        <h2>Have you ever needed to take a poll in Slack?</h2>
+                        <p>Party Poll is the first completely free Slack app used to create polls.</p>
+                        <ul class="list-unstyled li-space-lg">
+                            <li class="media">
+                                <i class="fas fa-square"></i>
+                                <div class="media-body">No more worrying about hitting the limit before you have to start paying</div>
+                            </li>
+                            <li class="media">
+                                <i class="fas fa-square"></i>
+                                <div class="media-body">No more cumbersome manually created emoji polls</div>
+                            </li>
+                            <li class="media">
+                                <i class="fas fa-square"></i>
+                                <div class="media-body">Upon entering the command, Party Poll will cast one vote to each option to allow users to easily select an emoji to vote</div>
+                            </li>
+                        </ul>
+                    </div> <!-- end of text-container -->
+                </div> <!-- end of col -->
+            </div> <!-- end of row -->
+        </div> <!-- end of container -->
+    </div> <!-- end of basic-1 -->
+    <!-- end of description 1 -->
+
+
+
+
+    <!-- Description 2 -->
+    <div class="tabs">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                </div> <!-- end of col -->
+            </div> <!-- end of row -->
+        </div> <!-- end of container -->
+    </div> <!-- end of tabs -->
+    <!-- end of description 2 -->
+
+    <div id="screens" class="slider">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    
+                    <!-- Image Slider -->
+                    <div class="slider-container">
+                        <div class="swiper-container image-slider">
+                            <div class="swiper-wrapper">
+                                
+                                <!-- Slide -->
+                                <div class="swiper-slide">
+                                    <a href="images/screenshot-1.png" class="popup-link" data-effect="fadeIn">
+                                        <img class="img-fluid" src="images/screenshot-1.png" alt="alternative">
+                                    </a>
+                                </div>
+                                <!-- end of slide -->
+
+                                <!-- Slide -->
+                                <div class="swiper-slide">
+                                    <a href="images/screenshot-2.png" class="popup-link" data-effect="fadeIn">
+                                        <img class="img-fluid" src="images/screenshot-2.png" alt="alternative">
+                                    </a>
+                                </div>
+                                <!-- end of slide -->
+
+                                <!-- Slide -->
+                                <div class="swiper-slide">
+                                    <a href="images/screenshot-3.png" class="popup-link" data-effect="fadeIn">
+                                        <img class="img-fluid" src="images/screenshot-3.png" alt="alternative">
+                                    </a>
+                                </div>
+                                <!-- end of slide -->
+
+                                <!-- Slide -->
+                                <div class="swiper-slide">
+                                    <a href="images/screenshot-4.png" class="popup-link" data-effect="fadeIn">
+                                        <img class="img-fluid" src="images/screenshot-4.png" alt="alternative">
+                                    </a>
+                                </div>
+                                <!-- end of slide -->
+
+                                <!-- Slide -->
+                                <div class="swiper-slide">
+                                    <a href="images/screenshot-5.png" class="popup-link" data-effect="fadeIn">
+                                        <img class="img-fluid" src="images/screenshot-5.png" alt="alternative">
+                                    </a>
+                                </div>
+                                <!-- end of slide -->
+
+                                <!-- Slide -->
+                                <div class="swiper-slide">
+                                    <a href="images/screenshot-1.png" class="popup-link" data-effect="fadeIn">
+                                        <img class="img-fluid" src="images/screenshot-6.png" alt="alternative">
+                                    </a>
+                                </div>
+                                <!-- end of slide -->
+
+                                <!-- Slide -->
+                                <div class="swiper-slide">
+                                    <a href="images/screenshot-2.png" class="popup-link" data-effect="fadeIn">
+                                        <img class="img-fluid" src="images/screenshot-7.png" alt="alternative">
+                                    </a>
+                                </div>
+                                <!-- end of slide -->
+
+                                <!-- Slide -->
+                                <div class="swiper-slide">
+                                    <a href="images/screenshot-3.png" class="popup-link" data-effect="fadeIn">
+                                        <img class="img-fluid" src="images/screenshot-8.png" alt="alternative">
+                                    </a>
+                                </div>
+                                <!-- end of slide -->
+
+                                <!-- Slide -->
+                                <div class="swiper-slide">
+                                    <a href="images/screenshot-4.png" class="popup-link" data-effect="fadeIn">
+                                        <img class="img-fluid" src="images/screenshot-1.png" alt="alternative">
+                                    </a>
+                                </div>
+                                <!-- end of slide -->
+
+                                <!-- Slide -->
+                                <div class="swiper-slide">
+                                    <a href="images/screenshot-5.png" class="popup-link" data-effect="fadeIn">
+                                        <img class="img-fluid" src="images/screenshot-2.png" alt="alternative">
+                                    </a>
+                                </div>
+                                <!-- end of slide -->
+                                
+                            </div> <!-- end of swiper-wrapper -->
+
+                            <!-- Add Arrows -->
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
+                            <!-- end of add arrows -->
+
+                        </div> <!-- end of swiper-container -->
+                    </div> <!-- end of slider-container -->
+                    <!-- end of image slider -->
+
+                </div> <!-- end of col -->
+            </div> <!-- end of row -->
+        </div> <!-- end of container -->
+    </div>
+
+
+
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="footer-col first">
+                        <h5>About Party Poll</h5>
+                        <p class="p-small">Party Poll is a free Slack app designs to make creating polls on Slack as simple as possible</p>
+                    </div> <!-- end of footer-col -->
+                    <div class="footer-col second">
+                        <h5>Contact Info</h5>
+                        <ul class="list-unstyled li-space-lg p-small">
+                            <li class="media">
+                                <i class="fas fa-globe"></i>
+                                <div class="media-body"><a href="https://adrielklein.com">https://adrielklein.com</a></div>
+                            </li>
+                            <li class="media">
+                                <i class="fas fa-envelope"></i>
+                                <div class="media-body"><a href="#your-link">adrielmklein@gmail.com</a></div>
+                            </li>
+
+                        </ul>
+                    </div> <!-- end of footer-col -->
+                    <div class="footer-col third">
+                        <h5>Value Links</h5>
+                        <ul class="list-unstyled li-space-lg p-small">
+                            <li><a href="terms-conditions.html">Terms & Conditions</a></li>
+                            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                        </ul>
+                    </div> <!-- end of footer-col -->
+                </div> <!-- end of col -->
+            </div> <!-- end of row -->
+        </div> <!-- end of container -->
+    </div> <!-- end of footer -->  
+    <!-- end of footer -->
+
+
+    <!-- Copyright -->
+    <div class="copyright">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <p class="p-small">Copyright © 2022 <a href="https://adrielklein.com">Adriel Klein </a> - All rights reserved</p>
+                </div> <!-- end of col -->
+            </div> <!-- enf of row -->
+            
+        </div> <!-- end of container -->
+    </div> <!-- end of copyright --> 
+    <!-- end of copyright -->
+    
+    	
+    <!-- Scripts -->
+    <script src="js/jquery.min.js"></script> <!-- jQuery for Bootstrap's JavaScript plugins -->
+    <script src="js/popper.min.js"></script> <!-- Popper tooltip library for Bootstrap -->
+    <script src="js/bootstrap.min.js"></script> <!-- Bootstrap framework -->
+    <script src="js/jquery.easing.min.js"></script> <!-- jQuery Easing for smooth scrolling between anchors -->
+    <script src="js/swiper.min.js"></script> <!-- Swiper for image and text sliders -->
+    <script src="js/jquery.magnific-popup.js"></script> <!-- Magnific Popup for lightboxes -->
+    <script src="js/validator.min.js"></script> <!-- Validator.js - Bootstrap plugin that validates forms -->
+    <script src="js/scripts.js"></script> <!-- Custom scripts -->
+</body>
 </html>
