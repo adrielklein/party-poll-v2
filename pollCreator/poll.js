@@ -3,7 +3,7 @@ const { REACTION_NAMES } = require("./constants");
 
 const sendHelp = (say) => {
   return say({
-    text: "Hello friend :wave: Welcome to party poll :balloon:",
+    text: ":wave: Welcome to party poll :balloon:",
     attachments: [
       {
         text: HELP_TEXT_LINES.join("\n"),

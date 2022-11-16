@@ -67,14 +67,11 @@ const expressReceiver = new ExpressReceiver({
     "channels:join",
     "reactions:write",
     "channels:read",
-    "groups:read",
-    "mpim:read",
-    "im:read",
   ],
   installationStore: {
     storeInstallation: async (installation) => {
       // Bolt will pass your handler an installation object
-      // Change the lines below so they save to your database
+      // Change the lines below so they save to your dat  ase
       console.log("calling storeInstallation");
       if (
         installation.isEnterpriseInstall &&
@@ -150,22 +147,26 @@ const app = new App({
 });
 
 app.command("/partypoll", async ({ ack, say, body, client }) => {
-  console.log("got to /partypoll and starting execution!!");
-  console.log({ body });
-  const conversationInfo = await client.conversations.info({
-    channel: body.channel_id,
-  });
-  console.log({ conversationInfo });
-  ack(
-    "/partypoll command cannot be used in a private channel or DM, please use the poll only in public channels."
-  );
-  // console.log("finished ack", body.channel_id);
-  // const result = await client.conversations.join({ channel: body.channel_id });
+  console.log("got to /partypoll and starting execution", body.channel_id);
+  const conversationListResponse = await client.conversations.list();
+  const isPublicChannel =
+    conversationListResponse.channels.filter(
+      (channel) => channel.id === body.channel_id
+    ).length > 0;
+  if (isPublicChannel) {
+    ack();
+    const joinResult = await client.conversations.join({
+      channel: body.channel_id,
+    });
 
-  // console.log("got here", { result });
-  // console.log("finished client.conversations.join");
-  // await createPoll(body.text, say, client);
-  // console.log("finished createPoll");
+    console.log("finished client.conversations.join", { result: joinResult });
+    await createPoll(body.text, say, client);
+    console.log("finished createPoll");
+  } else {
+    ack(
+      "/partypoll cannot be used in a private channel or DM at this time. Please use the command only in public channels."
+    );
+  }
 });
 
 app.command("/partypolltest", async ({ ack, say, body, client }) => {
