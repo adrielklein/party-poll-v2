@@ -78,6 +78,10 @@ body, p {
 	margin-top: 6rem;
 }
 
+.no-margin {
+ margin-left: 0px !important;
+}
+
 .p-small {
 	font: 400 0.875rem/1.5rem "Open Sans", sans-serif;
 }
@@ -94,6 +98,10 @@ body, p {
 
 .donate {
 	height: 20px;
+	text-align: center;
+}
+
+.center {
 	text-align: center;
 }
 
