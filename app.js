@@ -61,7 +61,16 @@ const expressReceiver = new ExpressReceiver({
   clientId: process.env.SLACK_CLIENT_ID,
   clientSecret: process.env.SLACK_CLIENT_SECRET,
   stateSecret: "my-secret",
-  scopes: ["chat:write", "commands", "channels:join", "reactions:write"],
+  scopes: [
+    "chat:write",
+    "commands",
+    "channels:join",
+    "reactions:write",
+    "channels:read",
+    "groups:read",
+    "mpim:read",
+    "im:read",
+  ],
   installationStore: {
     storeInstallation: async (installation) => {
       // Bolt will pass your handler an installation object
@@ -141,22 +150,22 @@ const app = new App({
 });
 
 app.command("/partypoll", async ({ ack, say, body, client }) => {
-  console.log("got to /partypoll");
-  console.log("ack", ack);
-  console.log("--------------------");
-  console.log("say", say);
-  console.log("--------------------");
-  console.log("body", body);
-  console.log("--------------------");
-  console.log("client", client);
-  console.log("--------------------");
+  console.log("got to /partypoll and starting execution!!");
+  console.log({ body });
+  const conversationInfo = await client.conversations.info({
+    channel: body.channel_id,
+  });
+  console.log({ conversationInfo });
+  ack(
+    "/partypoll command cannot be used in a private channel or DM, please use the poll only in public channels."
+  );
+  // console.log("finished ack", body.channel_id);
+  // const result = await client.conversations.join({ channel: body.channel_id });
 
-  await ack();
-  console.log("finished ack", body.channel_id);
-  await client.conversations.join({ channel: body.channel_id });
-  console.log("finished client.conversations.join");
-  await createPoll(body.text, say, client);
-  console.log("finished createPoll");
+  // console.log("got here", { result });
+  // console.log("finished client.conversations.join");
+  // await createPoll(body.text, say, client);
+  // console.log("finished createPoll");
 });
 
 app.command("/partypolltest", async ({ ack, say, body, client }) => {

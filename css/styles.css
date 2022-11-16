@@ -87,6 +87,16 @@ body, p {
 	text-align: center;
 }
 
+.p-heading-special {
+	margin-bottom: 1rem !important;
+	text-align: center;
+}
+
+.donate {
+	height: 20px;
+	text-align: center;
+}
+
 h1 {
 	color: #333;
 	font: 700 2.625rem/3.375rem "Open Sans", sans-serif;
@@ -193,6 +203,27 @@ a.red {
 .btn-solid-lg .fab.fa-google-play {
 	font-size: 1rem;
 }
+
+.btn-solid-lg-2 {
+	display: inline-block;
+	padding: 1.5rem 2.375rem 1.5rem 2.375rem;
+	border: 0.125rem solid #FFC43A;
+	border-radius: 2rem;
+	background-color: #FFC43A;
+	color: rgb(255, 255, 255);
+	font: 700 0.875rem/0 "Open Sans", sans-serif;
+	text-decoration: none;
+	transition: all 0.2s;
+}
+
+.btn-solid-lg-2:hover {
+	border: 0.125rem solid #FFC43A;
+	background-color: transparent;
+	color: #FFC43A;
+	text-decoration: none;
+}
+
+
 
 .btn-outline-reg {
 	display: inline-block;
