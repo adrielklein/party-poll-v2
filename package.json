@@ -9,7 +9,8 @@
     "@vendia/serverless-express": "^4.10.1",
     "axios": "^1.1.3",
     "pg": "^8.8.0",
-    "querystring": "^0.2.1"
+    "querystring": "^0.2.1",
+    "serverless-domain-manager": "^6.2.0"
   },
   "devDependencies": {
     "serverless-dotenv-plugin": "^4.0.2",

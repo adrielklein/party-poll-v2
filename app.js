@@ -61,6 +61,11 @@ const expressReceiver = new ExpressReceiver({
   clientId: process.env.SLACK_CLIENT_ID,
   clientSecret: process.env.SLACK_CLIENT_SECRET,
   stateSecret: "my-secret",
+  redirectUri: "https://poll-party.com/slack/oauth_redirect",
+  installerOptions: {
+    directInstall: true,
+    redirectUriPath: "/slack/oauth_redirect",
+  },
   scopes: [
     "chat:write",
     "commands",
@@ -139,10 +144,9 @@ const app = new App({
   receiver: expressReceiver,
   processBeforeResponse: true,
   logLevel: LogLevel.DEBUG,
-  // redirectUri:
-  //   "https://dtyiwqjl70.execute-api.us-east-1.amazonaws.com/dev/slack/oauth_redirect",
   installerOptions: {
     directInstall: true,
+    redirectUriPath: "/slack/oauth_redirect",
   },
 });
 
@@ -191,48 +195,24 @@ expressReceiver.router.post("/slack/events", (req, res) => {
 });
 
 expressReceiver.router.get("/slack/oauth_redirect", async (req, res) => {
-  console.log("got to oauth_redirect with req", { req });
+  console.log("got to oauth_redirect with req");
   const query = req.query;
-  res.writeHead(200, { "Content-Type": "application/json" });
+  console.log("got query in redirect", { query });
 
-  console.log("got here with query", { params: query });
+  const error = query.error;
 
-  const code = query.code;
-  const state = query.state;
-
-  console.log("got here with code and state", { code, state });
-
-  const data = {
-    code,
-    clientId: process.env.SLACK_CLIENT_ID,
-    clientSecret: process.env.SLACK_CLIENT_SECRET,
-    state,
-  };
-  console.log("client id is ", process.env.SLACK_CLIENT_ID);
-  const options = {
-    method: "POST",
-    headers: { "content-type": "application/x-www-form-urlencoded" },
-    data: qs.stringify(data),
-    url: "https://slack.com/api/oauth.v2.access",
-  };
-  try {
-    await axios(options)
-      .then((response) => {
-        console.log("success in api/oauth.v2.access");
-        console.log({ response });
-        console.log("meta", response.data.response_metadata);
-      })
-      .catch((error) => {
-        console.log("error in api/oauth.v2.access");
-        console.log(error);
-      });
-  } catch (error) {
-    console.log("got error with axios", { error });
+  if (error === "access_denied") {
+    res.send("You have successfully denied access to Party Poll. If this was a mistake, please visit https://party-poll.app/ to try again.");
+  } else if (error !== null){
+    res.send("An unexpected error occured, please visit https://party-poll.app/ to try again.");
   }
-  console.log("done with axios");
 
-  res.send("You are now authenticated and can use Party Poll in your app!");
-  res.end();
+  try {
+    res.send("You are now authenticated and can use Party Poll in your app!");
+    res.end();
+  } catch (error) {
+    console.log("got to this error", error);
+  }
 });
 
 expressReceiver.router.get("/health-check", (req, res) => {
