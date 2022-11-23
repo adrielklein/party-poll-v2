@@ -1,9 +1,7 @@
 const { App, ExpressReceiver, LogLevel } = require("@slack/bolt");
 const serverlessExpress = require("@vendia/serverless-express");
-const axios = require("axios");
 const { Client } = require("pg");
 
-var qs = require("querystring");
 const { createPoll } = require("./pollCreator/poll");
 
 const db_creds = {
@@ -61,10 +59,8 @@ const expressReceiver = new ExpressReceiver({
   clientId: process.env.SLACK_CLIENT_ID,
   clientSecret: process.env.SLACK_CLIENT_SECRET,
   stateSecret: "my-secret",
-  redirectUri: "https://poll-party.com/slack/oauth_redirect",
   installerOptions: {
     directInstall: true,
-    redirectUriPath: "/slack/oauth_redirect",
   },
   scopes: [
     "chat:write",
@@ -146,7 +142,6 @@ const app = new App({
   logLevel: LogLevel.DEBUG,
   installerOptions: {
     directInstall: true,
-    redirectUriPath: "/slack/oauth_redirect",
   },
 });
 
@@ -195,23 +190,27 @@ expressReceiver.router.post("/slack/events", (req, res) => {
 });
 
 expressReceiver.router.get("/slack/oauth_redirect", async (req, res) => {
-  console.log("got to oauth_redirect with req");
+  // THIS CODE DOESN'T ACTUALLY HIT SINCE THE REDIRECT URL IS BUILT IN BY BOLT
+  console.log("got to oauth_redirect with req", { req });
   const query = req.query;
-  console.log("got query in redirect", { query });
+  res.writeHead(200, { "Content-Type": "application/json" });
 
+  console.log("got here with query", { query });
+
+  const code = query.code;
+  const state = query.state;
   const error = query.error;
 
   if (error === "access_denied") {
-    res.send("You have successfully denied access to Party Poll. If this was a mistake, please visit https://party-poll.app/ to try again.");
-  } else if (error !== null){
-    res.send("An unexpected error occured, please visit https://party-poll.app/ to try again.");
-  }
+    res.send(
+      "<p>You have denied access to Party Poll. If this was a mistake, please visit <a href='https://party-poll.app/'>the home page</a> and try again.<p>"
+    );
+  } else if (error) {
+    console.log("unexpected error!!!", { error });
 
-  try {
-    res.send("You are now authenticated and can use Party Poll in your app!");
-    res.end();
-  } catch (error) {
-    console.log("got to this error", error);
+    res.send(
+      `<p>An unexpected error occured (${error}), please visit  <a href='https://party-poll.app/'>the home page</a> to try again.</p>`
+    );
   }
 });
 
